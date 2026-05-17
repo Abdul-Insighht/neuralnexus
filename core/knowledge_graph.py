@@ -334,7 +334,16 @@ class DynamicKnowledgeGraph:
             "department": "#14B8A6", "entity": "#64748B",
         }
 
+        # Only include entities that have at least one connection to prevent physics engine freeze
+        connected_entities = set()
+        for rel in self.relations:
+            connected_entities.add(rel.source_entity)
+            connected_entities.add(rel.target_entity)
+
         for eid, entity in self.entities.items():
+            if eid not in connected_entities:
+                continue
+                
             color = type_colors.get(entity.entity_type, "#64748B")
             size = 25 if entity.entity_type in ("company", "region") else 15
             net.add_node(
