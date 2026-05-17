@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
@@ -242,6 +242,13 @@ def get_knowledge_graph():
         return {"stats": stats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/knowledge_graph_html")
+def get_knowledge_graph_html():
+    file_path = os.path.join(PROJECT_ROOT, "app", "knowledge_graph.html")
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Knowledge graph visual not generated yet.")
 
 @app.get("/api/lineage")
 def get_lineage():

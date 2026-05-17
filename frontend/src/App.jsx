@@ -547,11 +547,12 @@ function App() {
                   <div className="book-card text-center"><p className="text-sm text-ink-500">Contradictions</p><p className="text-4xl font-serif text-ink-900">{kgStats.stats?.contradiction_count || 0}</p></div>
                   <div className="book-card text-center"><p className="text-sm text-ink-500">Components</p><p className="text-4xl font-serif text-ink-900">{kgStats.stats?.connected_components || 0}</p></div>
                   
-                  <div className="book-card col-span-2 md:col-span-4 mt-6">
-                     <p className="text-ink-600 text-center py-12 border border-dashed border-parchment-300 rounded-lg">
-                       PyVis interactive graph rendering is processed in Python.<br/>
-                       <i>(This dashboard displays aggregate statistical graph data extracted via the API)</i>
-                     </p>
+                  <div className="book-card col-span-2 md:col-span-4 mt-6 p-0 overflow-hidden" style={{height: "600px"}}>
+                     <iframe 
+                       src={`${API_BASE}/knowledge_graph_html`} 
+                       className="w-full h-full border-0"
+                       title="Knowledge Graph Visualization"
+                     />
                   </div>
                 </div>
               )}

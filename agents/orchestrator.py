@@ -386,6 +386,12 @@ class OrchestratorAgent(BaseAgent):
                 source_b=c.source_b_name,
             )
 
+        # Export for visualization
+        try:
+            self.knowledge_graph.export_pyvis(os.path.join("app", "knowledge_graph.html"))
+        except Exception as e:
+            print(f"  [-] Failed to export Knowledge Graph PyVis HTML: {e}")
+
     def _build_vector_store_local(self):
         """
         Chunk all data and index with LOCAL random embeddings.
