@@ -182,6 +182,48 @@ class BaseAgent:
             metadata={"error": str(last_error)},
         )
 
+    def query_stream(self, prompt: str, context: str = "", temperature: float = None):
+        """Send a query to the Gemini model and stream the response."""
+        if not self.model:
+            yield f"**{self.agent_name}** is offline — no valid Gemini API key configured.\n\n"
+            return
+
+        full_prompt = prompt
+        if context:
+            full_prompt = f"CONTEXT:\n{context}\n\nQUERY:\n{prompt}"
+
+        config = None
+        if temperature is not None:
+            config = genai.GenerationConfig(
+                temperature=temperature,
+                max_output_tokens=GENERATION_CONFIG["max_output_tokens"],
+            )
+
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                _rate_limiter.wait()
+                response = self.model.generate_content(
+                    full_prompt,
+                    generation_config=config,
+                    stream=True
+                )
+                
+                for chunk in response:
+                    if chunk.text:
+                        yield chunk.text
+                return  # Success, exit retry loop
+            except Exception as e:
+                err_str = str(e).lower()
+                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str:
+                    time.sleep(5 * (attempt + 1))
+                    continue
+                else:
+                    yield f"\n\n**Error:** {str(e)[:200]}"
+                    return
+        
+        yield "\n\n**Error:** Max retries exceeded."
+
     def query_with_chat(self, message: str) -> AgentResponse:
         """Send a message in an ongoing chat session."""
         if not self.model:

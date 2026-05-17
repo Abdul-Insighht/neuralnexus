@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
@@ -101,6 +102,20 @@ def query_data(req: QueryRequest):
             "specialist_insights": result.get("specialist_insights", {}),
             "review": result.get("review", {})
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/query_stream")
+def query_data_stream(req: QueryRequest):
+    orch = get_orch()
+    if not state["initialized"]:
+        raise HTTPException(status_code=400, detail="Fabric not initialized. Please load data first.")
+    
+    try:
+        return StreamingResponse(
+            orch.process_query_stream(req.query),
+            media_type="application/x-ndjson"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

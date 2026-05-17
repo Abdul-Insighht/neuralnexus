@@ -122,16 +122,56 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/query`, {
+      const res = await fetch(`${API_BASE}/query_stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: newChat.content })
       });
-      const data = await res.json();
-      if (res.ok) {
-        setChatHistory(prev => [...prev, { role: 'assistant', content: data.answer, meta: data }]);
-      } else {
-        setChatHistory(prev => [...prev, { role: 'assistant', content: "Error: " + data.detail }]);
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        setChatHistory(prev => [...prev, { role: 'assistant', content: "Error: " + (errorData.detail || "Unknown error") }]);
+        setLoading(false);
+        return;
+      }
+
+      let assistantMessage = { role: 'assistant', content: '', meta: null };
+      setChatHistory(prev => [...prev, assistantMessage]);
+      
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let done = false;
+      let buffer = '';
+      
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (value) {
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop(); // Keep the last incomplete line in buffer
+          
+          for (let line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const data = JSON.parse(line);
+              if (data.type === 'chunk') {
+                assistantMessage.content += data.content;
+              } else if (data.type === 'meta') {
+                assistantMessage.meta = data.data;
+              } else if (data.type === 'error') {
+                assistantMessage.content += "\n\nError: " + data.content;
+              }
+              setChatHistory(prev => {
+                const newHistory = [...prev];
+                newHistory[newHistory.length - 1] = { ...assistantMessage };
+                return newHistory;
+              });
+            } catch (e) {
+              console.error("Error parsing chunk:", line);
+            }
+          }
+        }
       }
     } catch (e) {
       setChatHistory(prev => [...prev, { role: 'assistant', content: "Failed to connect to API." }]);

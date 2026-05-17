@@ -24,11 +24,11 @@ LOBSTER_TRAP_ENDPOINT = os.environ.get("LOBSTER_TRAP_ENDPOINT", None)
 # ─── Gemini Model Selection ─────────────────────────────────────────────────
 # All agents use Gemini 2.0 Flash for speed and cost-efficiency
 MODELS = {
-    "orchestrator": "models/gemini-2.5-flash",
-    "validator":    "models/gemini-2.5-flash",
-    "reconciler":   "models/gemini-2.5-flash",
-    "forecaster":   "models/gemini-2.5-flash",
-    "critic":       "models/gemini-2.5-flash",
+    "orchestrator": "models/gemini-2.5-flash-lite",
+    "validator":    "models/gemini-2.5-flash-lite",
+    "reconciler":   "models/gemini-2.5-flash-lite",
+    "forecaster":   "models/gemini-2.5-flash-lite",
+    "critic":       "models/gemini-2.5-flash-lite",
     "embedding":    "models/gemini-embedding-2",
 }
 

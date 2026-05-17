@@ -238,6 +238,83 @@ class OrchestratorAgent(BaseAgent):
             "lineage": self.lineage_tracker.to_dict(),
         }
 
+    def process_query_stream(self, user_query: str):
+        """
+        Process a user query through the intelligence pipeline and yield streaming NDJSON chunks.
+        Bypasses the CriticAgent review to enable real-time streaming speed.
+        """
+        import json
+        
+        if not self.is_initialized:
+            yield json.dumps({
+                "type": "error",
+                "content": "Please ingest data first using the sidebar."
+            }) + "\n"
+            return
+
+        # Retrieve Context
+        retrieved_context = self._retrieve_context(user_query)
+        kg_context = self._query_knowledge_graph(user_query)
+        contradiction_context = self._get_relevant_contradictions(user_query)
+        data_summary = self._get_data_summary()
+
+        full_context = self._build_query_context(
+            user_query, retrieved_context, kg_context,
+            contradiction_context, data_summary
+        )
+
+        prompt = (
+            f"USER QUERY: {user_query}\n\n"
+            "Answer this query using the provided context. Follow these rules:\n"
+            "1. Cite specific data sources for every factual claim\n"
+            "2. If there are contradictions in the data, explain them\n"
+            "3. Provide confidence levels\n"
+            "4. Give actionable insights\n"
+            "5. Rate your overall confidence (0-100%)\n"
+        )
+
+        # Track lineage
+        for r in retrieved_context[:5]:
+            self.lineage_tracker.track_text_extract(
+                source_id=r.chunk.source_id,
+                source_name=r.chunk.source_name,
+                text_span=r.chunk.content[:200],
+                fact_text=user_query,
+            )
+
+        sources_used = list(set(
+            r.chunk.source_name for r in retrieved_context
+        )) if retrieved_context else []
+
+        full_answer = ""
+        # Stream the LLM response
+        for chunk in self.query_stream(prompt, context=full_context):
+            full_answer += chunk
+            yield json.dumps({
+                "type": "chunk",
+                "content": chunk
+            }) + "\n"
+
+        # Try to extract confidence from the full string
+        confidence = self._extract_confidence(full_answer)
+
+        # Optional: Async specialist insights (we do this synchronously here, but fast)
+        specialist_insights = self._route_to_specialists(user_query)
+
+        # Yield the final metadata chunk
+        yield json.dumps({
+            "type": "meta",
+            "data": {
+                "confidence": confidence,
+                "sources": sources_used,
+                "specialist_insights": specialist_insights,
+                "review": None, # Skipped for streaming
+                "contradictions_found": len(self.contradictions),
+                "retrieved_chunks": len(retrieved_context),
+                "lineage": self.lineage_tracker.to_dict(),
+            }
+        }) + "\n"
+
     def get_proactive_insights(self) -> Dict[str, Any]:
         """Generate proactive insights without user asking."""
         results = {}
