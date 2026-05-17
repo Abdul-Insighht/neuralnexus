@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Brain, FileText, Activity, AlertTriangle, ShieldAlert, 
-  Database, Network, MessageSquare, BarChart3, LineChart, Server, Upload, Trash2, Play, Search
+  Database, Network, MessageSquare, BarChart3, LineChart, Server, Upload, Trash2, Play, Search, Loader2
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
@@ -248,7 +248,7 @@ function App() {
                 disabled={loading}
                 className="w-full bg-ink-100 text-ink-900 border border-ink-300 py-2 rounded-md hover:bg-ink-200 transition-colors flex items-center justify-center gap-2 font-medium shadow-sm"
               >
-                {loading ? <Activity className="animate-spin" size={14}/> : <Database size={14}/>}
+                {loading ? <Loader2 className="animate-spin" size={14}/> : <Database size={14}/>}
                 Init Demo Data
               </button>
             </div>
@@ -344,7 +344,7 @@ function App() {
                   )}
                   {loading && (
                     <div className="flex items-center gap-2 text-ink-500 text-sm">
-                      <Activity className="animate-spin" size={16} /> Orchestrating agents...
+                      <Loader2 className="animate-spin" size={16} /> Orchestrating agents...
                     </div>
                   )}
                 </div>
