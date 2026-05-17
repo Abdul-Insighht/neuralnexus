@@ -7,7 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://neuralnexus-backend.onrender.com/api';
 
 function App() {
   const [initialized, setInitialized] = useState(false);
@@ -29,7 +29,7 @@ function App() {
   const [uploadCred, setUploadCred] = useState(0.75);
 
   useEffect(() => {
-    fetch('http://localhost:8000/')
+    fetch('https://neuralnexus-backend.onrender.com/')
       .then(res => res.json())
       .then(data => {
         setInitialized(data.initialized);
