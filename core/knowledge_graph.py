@@ -307,8 +307,8 @@ class DynamicKnowledgeGraph:
         return {
             "total_entities": len(self.entities),
             "total_relations": len(self.relations),
-            "entity_types": dict(pd.Series([e.entity_type for e in self.entities.values()]).value_counts()),
-            "relation_types": dict(pd.Series([r.relation_type for r in self.relations]).value_counts()),
+            "entity_types": {str(k): int(v) for k, v in pd.Series([e.entity_type for e in self.entities.values()]).value_counts().items()},
+            "relation_types": {str(k): int(v) for k, v in pd.Series([r.relation_type for r in self.relations]).value_counts().items()},
             "contradiction_count": sum(1 for r in self.relations if r.relation_type == "contradicts"),
             "connected_components": nx.number_weakly_connected_components(self.graph) if len(self.graph) > 0 else 0,
         }
