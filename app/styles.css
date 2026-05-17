@@ -1,0 +1,355 @@
+/* NeuralNexus — Clean Enterprise Dark + Green/White Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    --bg-deep:       #0F172A;
+    --bg-surface:    #1E293B;
+    --bg-card:       #1E293B;
+    --bg-card-alt:   #253348;
+    --bg-input:      #0F172A;
+
+    --green:         #22C55E;
+    --green-dim:     #16A34A;
+    --green-glow:    rgba(34,197,94,0.18);
+    --green-border:  rgba(34,197,94,0.30);
+
+    --white:         #FFFFFF;
+    --white-90:      rgba(255,255,255,0.92);
+    --white-70:      rgba(255,255,255,0.70);
+    --white-50:      rgba(255,255,255,0.50);
+    --white-30:      rgba(255,255,255,0.30);
+    --white-12:      rgba(255,255,255,0.12);
+    --white-06:      rgba(255,255,255,0.06);
+
+    --amber:         #FBBF24;
+    --red:           #EF4444;
+    --blue:          #3B82F6;
+
+    --radius: 8px;
+    --transition: all 0.2s ease;
+}
+
+/* ── Global ───────────────────────────────────────────────────────────────── */
+.stApp {
+    background: var(--bg-deep) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    color: var(--white-90) !important;
+}
+.stApp header { background: transparent !important; }
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] {
+    background: var(--bg-surface) !important;
+    border-right: 1px solid var(--white-12) !important;
+}
+section[data-testid="stSidebar"] .stMarkdown h1,
+section[data-testid="stSidebar"] .stMarkdown h2,
+section[data-testid="stSidebar"] .stMarkdown h3 {
+    color: var(--green) !important;
+    font-weight: 700 !important;
+}
+section[data-testid="stSidebar"] .stMarkdown p,
+section[data-testid="stSidebar"] .stMarkdown li,
+section[data-testid="stSidebar"] .stMarkdown span {
+    color: var(--white-70) !important;
+}
+
+/* ── Metric Cards ─────────────────────────────────────────────────────────── */
+div[data-testid="stMetric"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--white-12) !important;
+    border-radius: var(--radius) !important;
+    padding: 14px 18px !important;
+    transition: var(--transition) !important;
+}
+div[data-testid="stMetric"]:hover {
+    border-color: var(--green-border) !important;
+    box-shadow: 0 0 16px var(--green-glow) !important;
+}
+div[data-testid="stMetric"] label {
+    color: var(--white-50) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+}
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    font-size: 26px !important;
+}
+div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+    color: var(--green) !important;
+}
+
+/* ── Tabs ──────────────────────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+    background: var(--bg-surface) !important;
+    border-radius: var(--radius) !important;
+    padding: 4px !important;
+    gap: 2px !important;
+    border: 1px solid var(--white-12) !important;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    color: var(--white-50) !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    padding: 8px 14px !important;
+    transition: var(--transition) !important;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--white-90) !important;
+    background: var(--white-06) !important;
+}
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: var(--green) !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"] { display: none !important; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.stButton > button {
+    background: var(--green) !important;
+    color: #000000 !important;
+    border: none !important;
+    border-radius: var(--radius) !important;
+    font-weight: 700 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    padding: 10px 24px !important;
+    transition: var(--transition) !important;
+}
+.stButton > button:hover {
+    background: var(--green-dim) !important;
+    box-shadow: 0 0 18px var(--green-glow) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+div[data-baseweb="input"],
+div[data-baseweb="base-input"],
+div[data-baseweb="textarea"] {
+    background: var(--bg-input) !important;
+    border-color: var(--white-12) !important;
+    border-radius: var(--radius) !important;
+}
+div[data-baseweb="input"]:focus-within,
+div[data-baseweb="base-input"]:focus-within,
+div[data-baseweb="textarea"]:focus-within {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 0 1px var(--green-glow) !important;
+}
+.stTextInput input, .stTextArea textarea {
+    background: transparent !important;
+    color: var(--white-90) !important;
+    font-family: 'Inter', sans-serif !important;
+    border: none !important;
+}
+.stTextInput input:focus, .stTextArea textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+.stChatInput textarea {
+    background: var(--bg-input) !important;
+    border: none !important;
+    color: var(--white-90) !important;
+}
+div[data-testid="stChatInput"] {
+    background: transparent !important;
+}
+div[data-testid="stChatInput"] > div {
+    background: var(--bg-input) !important;
+    border: 1px solid var(--white-12) !important;
+    border-radius: var(--radius) !important;
+}
+div[data-testid="stChatInput"] button {
+    background: transparent !important;
+    color: var(--white-90) !important;
+}
+
+/* ── Chat Messages ────────────────────────────────────────────────────────── */
+.stChatMessage {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--white-12) !important;
+    border-radius: var(--radius) !important;
+    padding: 16px !important;
+}
+/* All text inside chat must be bright white */
+.stChatMessage p,
+.stChatMessage li,
+.stChatMessage span,
+.stChatMessage div {
+    color: #FFFFFF !important;
+}
+.stChatMessage strong, .stChatMessage b {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+.stChatMessage code {
+    background: #253348 !important;
+    color: #22C55E !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+    word-break: break-all !important;
+}
+.stChatMessage pre {
+    background: #0F172A !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+    overflow-x: auto !important;
+}
+.stChatMessage pre code {
+    background: transparent !important;
+    color: #E2E8F0 !important;
+    font-size: 12px !important;
+    word-break: normal !important;
+}
+.stChatMessage a {
+    color: #22C55E !important;
+    text-decoration: underline !important;
+}
+.stChatMessage hr {
+    border-color: rgba(255,255,255,0.15) !important;
+    margin: 12px 0 !important;
+}
+
+/* ── Expanders ────────────────────────────────────────────────────────────── */
+details[data-testid="stExpander"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--white-12) !important;
+    border-radius: var(--radius) !important;
+    margin-bottom: 6px !important;
+}
+details[data-testid="stExpander"]:hover {
+    border-color: var(--green-border) !important;
+}
+details[data-testid="stExpander"] summary {
+    background: var(--bg-card) !important;
+    color: var(--white) !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius) !important;
+}
+details[data-testid="stExpander"] summary:hover {
+    background: var(--bg-card-alt) !important;
+}
+details[data-testid="stExpander"] p,
+details[data-testid="stExpander"] li,
+details[data-testid="stExpander"] span {
+    color: #FFFFFF !important;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+.stMarkdown h1 {
+    color: var(--white) !important;
+    font-weight: 800 !important;
+}
+.stMarkdown h2 {
+    color: var(--green) !important;
+    font-weight: 700 !important;
+    border-bottom: 1px solid var(--white-12) !important;
+    padding-bottom: 8px !important;
+}
+.stMarkdown h3 {
+    color: var(--white-90) !important;
+    font-weight: 600 !important;
+}
+.stMarkdown h4 {
+    color: var(--white-90) !important;
+    font-weight: 600 !important;
+}
+.stMarkdown p, .stMarkdown li {
+    color: var(--white-70) !important;
+    line-height: 1.65 !important;
+}
+.stMarkdown strong, .stMarkdown b {
+    color: var(--white) !important;
+}
+.stMarkdown code {
+    background: var(--bg-card-alt) !important;
+    color: var(--green) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+}
+.stMarkdown a {
+    color: var(--green) !important;
+}
+
+/* ── Progress ─────────────────────────────────────────────────────────────── */
+.stProgress > div > div {
+    background: linear-gradient(90deg, var(--green-dim), var(--green)) !important;
+    border-radius: 8px !important;
+}
+
+/* ── Alerts ────────────────────────────────────────────────────────────────── */
+div[data-testid="stAlert"] {
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--white-12) !important;
+}
+div[data-testid="stAlert"] p,
+div[data-testid="stAlert"] span,
+div[data-testid="stAlert"] div,
+div[data-testid="stAlert"] strong,
+div[data-testid="stAlert"] b {
+    color: var(--white) !important;
+}
+
+/* ── DataFrame ────────────────────────────────────────────────────────────── */
+.stDataFrame { border-radius: var(--radius) !important; overflow: hidden !important; }
+
+/* ── Code Blocks ──────────────────────────────────────────────────────────── */
+div[data-testid="stCodeBlock"] {
+    background: var(--bg-card-alt) !important;
+    border: 1px solid var(--white-12) !important;
+    border-radius: var(--radius) !important;
+}
+div[data-testid="stCodeBlock"] pre {
+    background: transparent !important;
+}
+div[data-testid="stCodeBlock"] code {
+    color: var(--green) !important;
+    background: transparent !important;
+}
+
+/* ── Selectbox ────────────────────────────────────────────────────────────── */
+[data-baseweb="select"] > div {
+    background: var(--bg-input) !important;
+    border-color: var(--white-12) !important;
+    border-radius: var(--radius) !important;
+    color: var(--white-90) !important;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--white-30); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+/* ── Caption / small text ─────────────────────────────────────────────────── */
+.stCaption, [data-testid="stCaptionContainer"] {
+    color: var(--white-50) !important;
+}
+
+/* ── Custom classes ───────────────────────────────────────────────────────── */
+.hero-title {
+    font-size: 2.6em; font-weight: 800;
+    color: var(--white); letter-spacing: -1px;
+}
+.hero-green { color: var(--green); }
+.hero-sub {
+    color: var(--white-50); font-size: 1.05em;
+    margin-top: 4px; font-weight: 400;
+}
+.footer-text {
+    text-align: center; color: var(--white-30);
+    font-size: 12px; padding: 16px 0;
+    border-top: 1px solid var(--white-06); margin-top: 40px;
+}

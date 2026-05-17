@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+output/
+demo_data/*.csv
+demo_data/*.json
+demo_data/*.xlsx
+demo_data/*.txt
+!demo_data/generate_data.py
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+.DS_Store

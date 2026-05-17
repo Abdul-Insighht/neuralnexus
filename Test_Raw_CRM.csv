@@ -1,0 +1,6 @@
+Transaction_ID,Date,Product,Region,Revenue,Profit
+TXN-1001,9/1/2023,Enterprise License,East,1500,450
+TXN-1002,9/5/2023,Cloud Storage,West,8500,1200
+TXN-1003,9/12/2023,Consulting,North,1200,800
+TXN-1004,9/20/2023,Hardware Server,South,22000,3000
+TXN-1005,9/28/2023,Support Contract,East,500,250
