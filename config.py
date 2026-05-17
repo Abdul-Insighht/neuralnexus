@@ -13,7 +13,7 @@ from typing import Dict, List
 # ─── API Keys ────────────────────────────────────────────────────────────────
 GEMINI_API_KEY = os.environ.get(
     "GEMINI_API_KEY",
-    "AIzaSyBn5TFV-MC0pumGH2PjkxoPqoqD6qwqQ5U",  # Set via env variable or .env file
+    "",  # WARNING: Do NOT hardcode your key here! Use Render Environment Variables or a local .env file.
 )
 
 # ─── Security & Governance ───────────────────────────────────────────────────
