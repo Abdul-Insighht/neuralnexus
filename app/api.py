@@ -158,11 +158,11 @@ def get_quality_dashboard():
         reports.append({
             "source_id": sid,
             "source_name": rpt.source_name,
-            "overall_score": rpt.overall_score,
+            "overall_score": float(rpt.overall_score),
             "grade": rpt.grade,
-            "completeness_score": rpt.completeness_score,
-            "consistency_score": rpt.consistency_score,
-            "timeliness_score": rpt.timeliness_score,
+            "completeness_score": float(rpt.completeness_score),
+            "consistency_score": float(rpt.consistency_score),
+            "timeliness_score": float(rpt.timeliness_score),
         })
         for iss in rpt.issues:
             issues.append({
