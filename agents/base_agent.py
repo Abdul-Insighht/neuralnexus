@@ -168,7 +168,21 @@ class BaseAgent:
             except Exception as e:
                 last_error = e
                 err_str = str(e).lower()
-                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
+                # Check for hard daily quota or billing limits
+                if "exceeded your current quota" in err_str or "quota exceeded" in err_str or "plan and billing" in err_str or "limit:" in err_str or "daily" in err_str:
+                    return AgentResponse(
+                        agent_name=self.agent_name,
+                        content=(
+                            f"⚠️ **Google Gemini API Daily Quota Exceeded!**\n\n"
+                            f"Your API key has exhausted its daily free-tier request limit for this model.\n\n"
+                            f"**How to Resolve:**\n"
+                            f"1. **Create a new API key** in Google AI Studio under a different Google Account (which gives you a fresh daily limit).\n"
+                            f"2. **Enable Pay-As-You-Go Billing** in Google AI Studio. (It remains 100% free up to 15 requests per minute, but completely removes the daily limit!)."
+                        ),
+                        confidence=0.0,
+                        metadata={"error": "daily_quota_exceeded"},
+                    )
+                elif "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
                     wait_time = 15 * (attempt + 1)  # 15s, 30s, 45s, 60s, 75s
                     time.sleep(wait_time)
                     continue
@@ -215,7 +229,17 @@ class BaseAgent:
                 return  # Success, exit retry loop
             except Exception as e:
                 err_str = str(e).lower()
-                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
+                # Check for hard daily quota or billing limits
+                if "exceeded your current quota" in err_str or "quota exceeded" in err_str or "plan and billing" in err_str or "limit:" in err_str or "daily" in err_str:
+                    yield (
+                        f"⚠️ **Google Gemini API Daily Quota Exceeded!**\n\n"
+                        f"Your API key has exhausted its daily free-tier request limit for this model.\n\n"
+                        f"**How to Resolve:**\n"
+                        f"1. **Create a new API key** in Google AI Studio under a different Google Account (which gives you a fresh daily limit).\n"
+                        f"2. **Enable Pay-As-You-Go Billing** in Google AI Studio. (It remains 100% free up to 15 requests per minute, but completely removes the daily limit!)."
+                    )
+                    return
+                elif "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
                     time.sleep(15 * (attempt + 1))
                     continue
                 else:
@@ -254,7 +278,21 @@ class BaseAgent:
             except Exception as e:
                 last_error = e
                 err_str = str(e).lower()
-                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
+                # Check for hard daily quota or billing limits
+                if "exceeded your current quota" in err_str or "quota exceeded" in err_str or "plan and billing" in err_str or "limit:" in err_str or "daily" in err_str:
+                    return AgentResponse(
+                        agent_name=self.agent_name,
+                        content=(
+                            f"⚠️ **Google Gemini API Daily Quota Exceeded!**\n\n"
+                            f"Your API key has exhausted its daily free-tier request limit for this model.\n\n"
+                            f"**How to Resolve:**\n"
+                            f"1. **Create a new API key** in Google AI Studio under a different Google Account (which gives you a fresh daily limit).\n"
+                            f"2. **Enable Pay-As-You-Go Billing** in Google AI Studio. (It remains 100% free up to 15 requests per minute, but completely removes the daily limit!)."
+                        ),
+                        confidence=0.0,
+                        metadata={"error": "daily_quota_exceeded"},
+                    )
+                elif "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
                     wait_time = 15 * (attempt + 1)
                     time.sleep(wait_time)
                     continue
