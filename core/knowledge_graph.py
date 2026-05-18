@@ -60,11 +60,15 @@ class DynamicKnowledgeGraph:
         self.relations: List[KGRelation] = []
         self._entity_counter = 0
         self._relation_counter = 0
+        self._name_index: Dict[str, str] = {}
 
     def add_entity(self, name: str, entity_type: str,
                    attributes: Dict = None, source: str = "",
                    confidence: float = 1.0) -> str:
         """Add or update an entity. Returns entity_id."""
+        if not hasattr(self, "_name_index"):
+            self._name_index = {e.name.lower().strip(): eid for eid, e in self.entities.items()}
+
         # Check for existing entity with same name and type
         existing_id = self._find_entity(name, entity_type)
         if existing_id:
@@ -90,6 +94,7 @@ class DynamicKnowledgeGraph:
             confidence=confidence,
         )
         self.entities[entity_id] = entity
+        self._name_index[name.lower().strip()] = entity_id
         self.graph.add_node(entity_id, label=name, type=entity_type,
                            confidence=confidence)
         return entity_id
@@ -246,11 +251,10 @@ class DynamicKnowledgeGraph:
             },
         )
 
-    def query_entity(self, name: str) -> Dict:
-        """Get all information about an entity and its connections."""
-        eid = self._find_entity(name)
-        if not eid:
-            return {"found": False, "name": name}
+    def query_entity_by_id(self, eid: str) -> Dict:
+        """Get all information about an entity by its ID (fast O(1) connections lookup)."""
+        if eid not in self.entities:
+            return {"found": False}
 
         entity = self.entities[eid]
         neighbors = list(self.graph.neighbors(eid))
@@ -286,6 +290,13 @@ class DynamicKnowledgeGraph:
             "contradiction_count": sum(1 for c in connections
                                        if c.get("relation") == "contradicts"),
         }
+
+    def query_entity(self, name: str) -> Dict:
+        """Get all information about an entity and its connections."""
+        eid = self._find_entity(name)
+        if not eid:
+            return {"found": False, "name": name}
+        return self.query_entity_by_id(eid)
 
     def get_contradictions(self) -> List[Dict]:
         """Get all contradiction edges."""
@@ -366,18 +377,30 @@ class DynamicKnowledgeGraph:
 
     # ── Internal ────────────────────────────────────────────────────────────
 
-    def _find_entity(self, name: str, entity_type: str = None) -> Optional[str]:
-        """Find entity by name (case-insensitive partial match)."""
+    def _find_entity(self, name: str, entity_type: str = None, allow_partial: bool = False) -> Optional[str]:
+        """Find entity by name (case-insensitive exact match with fast index lookup)."""
         name_lower = name.lower().strip()
-        for eid, entity in self.entities.items():
-            if entity.name.lower().strip() == name_lower:
-                if entity_type is None or entity.entity_type == entity_type:
-                    return eid
-        # Partial match
-        for eid, entity in self.entities.items():
-            if name_lower in entity.name.lower() or entity.name.lower() in name_lower:
-                if entity_type is None or entity.entity_type == entity_type:
-                    return eid
+        
+        # 1. Fast exact lookup using index
+        if hasattr(self, "_name_index") and name_lower in self._name_index:
+            eid = self._name_index[name_lower]
+            if entity_type is None or self.entities[eid].entity_type == entity_type:
+                return eid
+                
+        # 2. Case-insensitive exact loop fallback (only if index is missing)
+        if not hasattr(self, "_name_index") or not self._name_index:
+            for eid, entity in self.entities.items():
+                if entity.name.lower().strip() == name_lower:
+                    if entity_type is None or entity.entity_type == entity_type:
+                        return eid
+                    
+        # 3. Partial match (only if explicitly requested and len >= 3)
+        if allow_partial and len(name_lower) >= 3:
+            for eid, entity in self.entities.items():
+                if name_lower in entity.name.lower() or entity.name.lower() in name_lower:
+                    if entity_type is None or entity.entity_type == entity_type:
+                        return eid
+                        
         return None
 
     def _infer_entity_type(self, column_name: str) -> str:

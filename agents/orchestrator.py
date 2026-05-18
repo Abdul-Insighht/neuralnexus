@@ -467,9 +467,27 @@ class OrchestratorAgent(BaseAgent):
         """Extract entities from query and look them up in KG."""
         import re
         entities_found = []
+        query_lower = query.lower()
+        
+        # Define common stop words to avoid match overhead
+        stop_words = {
+            "and", "the", "for", "our", "with", "this", "that", "should", 
+            "what", "have", "from", "your", "does", "trust", "revenue", 
+            "sales", "market", "feed", "quarter", "report", "database"
+        }
+        
         for eid, entity in self.knowledge_graph.entities.items():
-            if entity.name.lower() in query.lower():
-                info = self.knowledge_graph.query_entity(entity.name)
+            name_lower = entity.name.lower().strip()
+            
+            # Avoid matching extremely short entity names or stop words
+            if len(name_lower) < 3 or name_lower in stop_words:
+                continue
+                
+            # Perform word-boundary or exact check rather than loose substring check
+            pattern = r'\b' + re.escape(name_lower) + r'\b'
+            if re.search(pattern, query_lower):
+                # Direct O(1) query by ID, bypasses slow partial match lookups!
+                info = self.knowledge_graph.query_entity_by_id(eid)
                 if info.get("found"):
                     entities_found.append(info)
 

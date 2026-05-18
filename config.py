@@ -29,7 +29,7 @@ MODELS = {
     "reconciler":   "models/gemini-2.5-flash-lite",
     "forecaster":   "models/gemini-2.5-flash-lite",
     "critic":       "models/gemini-2.5-flash-lite",
-    "embedding":    "models/gemini-embedding-2",
+    "embedding":    "models/embedding-001",
 }
 
 
