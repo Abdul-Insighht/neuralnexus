@@ -7,7 +7,13 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 
-const API_BASE = 'https://neuralnexus-backend.onrender.com/api';
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = IS_LOCAL 
+  ? 'http://localhost:8000/api' 
+  : 'https://neuralnexus-backend.onrender.com/api';
+const HEALTH_URL = IS_LOCAL 
+  ? 'http://localhost:8000/' 
+  : 'https://neuralnexus-backend.onrender.com/';
 
 function App() {
   const [initialized, setInitialized] = useState(false);
@@ -29,7 +35,7 @@ function App() {
   const [uploadCred, setUploadCred] = useState(0.75);
 
   useEffect(() => {
-    fetch('https://neuralnexus-backend.onrender.com/')
+    fetch(HEALTH_URL)
       .then(res => res.json())
       .then(data => {
         setInitialized(data.initialized);
@@ -428,7 +434,7 @@ function App() {
                   </div>
                   
                   <div className="book-card h-80 pt-6">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height={260} debounce={50}>
                       <BarChart data={qualityData.reports} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e1d5c2" vertical={false} />
                         <XAxis dataKey="source_name" axisLine={false} tickLine={false} tick={{fill: '#7c6148', fontSize: 12}} />
@@ -440,6 +446,53 @@ function App() {
                         <Bar dataKey="timeliness_score" name="Timeliness" fill="#644e3b" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
+                  </div>
+
+                  {/* Issues Detected Section */}
+                  <div className="book-card mt-6">
+                    <h3 className="text-xl font-serif text-ink-950 mb-4 flex items-center gap-2">
+                      <AlertTriangle className="text-ink-800" size={20} />
+                      Issues Detected ({qualityData.issues?.length || 0})
+                    </h3>
+                    {(!qualityData.issues || qualityData.issues.length === 0) ? (
+                      <p className="text-sm italic text-ink-500">No issues detected across data sources. Perfect quality score!</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm text-ink-800 border-collapse">
+                          <thead>
+                            <tr className="border-b border-parchment-300 text-xs font-bold uppercase tracking-wider text-ink-500">
+                              <th className="py-2 px-3">Severity</th>
+                              <th className="py-2 px-3">Source</th>
+                              <th className="py-2 px-3">Type</th>
+                              <th className="py-2 px-3">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {qualityData.issues.map((iss, index) => {
+                              const sevColors = {
+                                'CRITICAL': 'text-crimson-600 bg-crimson-50 border-crimson-200',
+                                'WARNING': 'text-amber-700 bg-amber-50 border-amber-200',
+                                'INFO': 'text-blue-700 bg-blue-50 border-blue-200'
+                              };
+                              const colorClass = sevColors[iss.severity] || 'text-ink-600 bg-parchment-100 border-parchment-200';
+                              
+                              return (
+                                <tr key={index} className="border-b border-parchment-200 hover:bg-parchment-100 transition-colors">
+                                  <td className="py-3 px-3">
+                                    <span className={`inline-block px-2 py-0.5 text-[10px] font-bold border rounded uppercase tracking-wider ${colorClass}`}>
+                                      {iss.severity}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-3 font-medium text-ink-900">{iss.source_name}</td>
+                                  <td className="py-3 px-3 capitalize font-mono text-xs">{iss.type.replace('_', ' ')}</td>
+                                  <td className="py-3 px-3 text-ink-700">{iss.description}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </>
               )}
