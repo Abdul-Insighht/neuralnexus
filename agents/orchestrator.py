@@ -105,7 +105,18 @@ class OrchestratorAgent(BaseAgent):
         print("\n[*] Scoring data quality...")
         self.quality_reports = self.quality_scorer.score_all(self.federation.sources)
         for sid, report in self.quality_reports.items():
-            print(f"  {report.summary()}")
+            try:
+                print(f"  {report.summary()}")
+            except UnicodeEncodeError:
+                safe_emoji = {"A": "[A]", "B": "[B]", "C": "[C]", "D": "[D]", "F": "[F]"}.get(report.grade, "[?]")
+                safe_summary = (
+                    f"{safe_emoji} {report.source_name}: {report.overall_score:.1f}/100 "
+                    f"(Grade {report.grade}) | "
+                    f"C={report.completeness_score:.0f} I={report.consistency_score:.0f} "
+                    f"T={report.timeliness_score:.0f} | "
+                    f"{len(report.issues)} issues found"
+                )
+                print(f"  {safe_summary}")
 
         # Detect contradictions (local — no API calls)
         print("\n[*] Scanning for contradictions...")
