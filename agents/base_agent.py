@@ -54,7 +54,7 @@ class _RateLimiter:
                 time.sleep(self._min_interval - elapsed)
             self._last_call = time.time()
 
-_rate_limiter = _RateLimiter(min_interval=0.0)
+_rate_limiter = _RateLimiter(min_interval=4.2)
 
 
 @dataclass
@@ -199,7 +199,7 @@ class BaseAgent:
                 max_output_tokens=GENERATION_CONFIG["max_output_tokens"],
             )
 
-        max_retries = 3
+        max_retries = 5
         for attempt in range(max_retries):
             try:
                 _rate_limiter.wait()
@@ -215,8 +215,8 @@ class BaseAgent:
                 return  # Success, exit retry loop
             except Exception as e:
                 err_str = str(e).lower()
-                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str:
-                    time.sleep(5 * (attempt + 1))
+                if "429" in str(e) or "quota" in err_str or "exhausted" in err_str or "resource" in err_str:
+                    time.sleep(15 * (attempt + 1))
                     continue
                 else:
                     yield f"\n\n**Error:** {str(e)[:200]}"
